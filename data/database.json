@@ -1,0 +1,64 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "email": "usuario@ejemplo.com",
+      "password": "12345",
+      "name": "Administrador",
+      "avatar": "/images/monetix-icon.png",
+      "createdAt": "2024-01-01T00:00:00Z"
+    }
+  ],
+  "bonds": [
+    {
+      "id": "bond-1",
+      "userId": "1",
+      "name": "Bono Ejemplo Especificación",
+      "code": "BON-001",
+      "status": "active",
+      "createdAt": "2024-01-15T10:30:00Z",
+      "updatedAt": "2024-01-15T10:30:00Z",
+      "input": {
+        "valorNominal": 500000000,
+        "valorComercial": 500000000,
+        "nAnios": 5,
+        "frecuenciaCupon": 2,
+        "diasPorAnio": 360,
+        "tipoTasa": "Efectiva",
+        "tasaInteres": 7.375,
+        "tipoGracia": "Parcial",
+        "plazoGraciaAnio": 2,
+        "costEstructuracionPct": 1.5,
+        "costColocacionPct": 1.0,
+        "costCavaliPct": 0.5,
+        "kd": null
+      },
+      "lastCalculation": null
+    },
+    {
+      "id": "bond-2",
+      "userId": "1",
+      "name": "Bono Corporativo ABC",
+      "code": "BON-002",
+      "status": "active",
+      "createdAt": "2024-01-10T14:20:00Z",
+      "updatedAt": "2024-01-10T14:20:00Z",
+      "input": {
+        "valorNominal": 10000000,
+        "valorComercial": 10000000,
+        "nAnios": 3,
+        "frecuenciaCupon": 1,
+        "diasPorAnio": 365,
+        "tipoTasa": "Nominal",
+        "tasaInteres": 8.5,
+        "tipoGracia": "Ninguna",
+        "plazoGraciaAnio": 0,
+        "costEstructuracionPct": 2.0,
+        "costColocacionPct": 1.5,
+        "costCavaliPct": 0.3,
+        "kd": 7.0
+      },
+      "lastCalculation": null
+    }
+  ]
+}
