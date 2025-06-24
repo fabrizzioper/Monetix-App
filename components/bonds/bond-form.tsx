@@ -18,7 +18,6 @@ import { cn } from "@/lib/utils"
 
 const defaultValues = {
   valorNominal: '',
-  valorComercial: '',
   nAnios: '',
   frecuenciaCupon: '',
   diasPorAnio: '',
@@ -50,11 +49,19 @@ export function BondForm() {
 
   const handleSubmit = async (values: any, actions: any) => {
     try {
-      const bondInput = {
-        ...values,
-        diasPorAnio: values.diasPorAnio,
-        kd: values.kd || undefined,
-      }
+      const bondInput: any = {};
+      if (values.valorNominal !== '') bondInput.valorNominal = Number(values.valorNominal);
+      if (values.nAnios !== '') bondInput.nAnios = Number(values.nAnios);
+      if (values.frecuenciaCupon !== '') bondInput.frecuenciaCupon = Number(values.frecuenciaCupon);
+      if (values.diasPorAnio !== '') bondInput.diasPorAnio = Number(values.diasPorAnio);
+      if (values.tasaInteres !== '') bondInput.tasaInteres = Number(values.tasaInteres);
+      if (values.plazoGraciaAnio !== '') bondInput.plazoGraciaAnio = Number(values.plazoGraciaAnio);
+      if (values.pctEstruct !== '') bondInput.pctEstruct = Number(values.pctEstruct);
+      if (values.pctColoc !== '') bondInput.pctColoc = Number(values.pctColoc);
+      if (values.pctCavali !== '') bondInput.pctCavali = Number(values.pctCavali);
+      if (values.kd !== '') bondInput.kd = Number(values.kd);
+      bondInput.tipoTasa = values.tipoTasa;
+      bondInput.tipoGracia = values.tipoGracia;
 
       let result
       if (mode === "edit" && currentBond) {
@@ -80,20 +87,28 @@ export function BondForm() {
 
   const handleSaveOnly = async (values: any) => {
     try {
-      const bondInput = {
-        ...values,
-        diasPorAnio: values.diasPorAnio,
-        kd: values.kd || undefined,
-      }
+      const bondInputSave: any = {};
+      if (values.valorNominal !== '') bondInputSave.valorNominal = Number(values.valorNominal);
+      if (values.nAnios !== '') bondInputSave.nAnios = Number(values.nAnios);
+      if (values.frecuenciaCupon !== '') bondInputSave.frecuenciaCupon = Number(values.frecuenciaCupon);
+      if (values.diasPorAnio !== '') bondInputSave.diasPorAnio = Number(values.diasPorAnio);
+      if (values.tasaInteres !== '') bondInputSave.tasaInteres = Number(values.tasaInteres);
+      if (values.plazoGraciaAnio !== '') bondInputSave.plazoGraciaAnio = Number(values.plazoGraciaAnio);
+      if (values.pctEstruct !== '') bondInputSave.pctEstruct = Number(values.pctEstruct);
+      if (values.pctColoc !== '') bondInputSave.pctColoc = Number(values.pctColoc);
+      if (values.pctCavali !== '') bondInputSave.pctCavali = Number(values.pctCavali);
+      if (values.kd !== '') bondInputSave.kd = Number(values.kd);
+      bondInputSave.tipoTasa = values.tipoTasa;
+      bondInputSave.tipoGracia = values.tipoGracia;
 
       if (mode === "edit" && currentBond) {
         await updateBond(currentBond.id, {
           name: bondName || currentBond.name,
-          input: bondInput,
+          input: bondInputSave,
         })
       } else {
         const name = bondName || `Bono ${new Date().toLocaleDateString("es-PE")}`
-        await createBond(name, bondInput)
+        await createBond(name, bondInputSave)
       }
 
       router.push("/dashboard")
@@ -461,3 +476,4 @@ export function BondForm() {
     </div>
   )
 }
+

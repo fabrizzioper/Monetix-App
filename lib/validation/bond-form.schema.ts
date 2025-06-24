@@ -6,11 +6,6 @@ export const bondFormSchema = Yup.object({
     .positive("Debe ser mayor a 0")
     .min(1000, "Mínimo S/ 1,000"),
 
-  valorComercial: Yup.number()
-    .required("El valor comercial es requerido")
-    .positive("Debe ser mayor a 0")
-    .min(1000, "Mínimo S/ 1,000"),
-
   nAnios: Yup.number()
     .required("El número de años es requerido")
     .integer("Debe ser un número entero")

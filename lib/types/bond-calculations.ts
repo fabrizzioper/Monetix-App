@@ -3,7 +3,6 @@
 export interface BondInput {
   // Datos principales
   valorNominal: number // S/
-  valorComercial: number // S/
   nAnios: number // años
   frecuenciaCupon: number // 1 = anual, 2 = semestral…
   diasPorAnio: 360 | 365 // convención
