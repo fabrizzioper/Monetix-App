@@ -13,6 +13,7 @@ import {
   TrendingUp,
   BarChart3,
   CandlestickChartIcon as Candlestick,
+  Info,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -26,6 +27,7 @@ import { BondCandlestickChart } from "./visualizations/bond-candlestick-chart"
 import { BondComboChart } from "./visualizations/bond-combo-chart"
 import { cn } from "@/lib/utils"
 import { LoadingSpinner, LoadingOverlay } from "@/components/ui/loading-spinner"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
 
 type ViewType = "table" | "line" | "candlestick" | "combo"
 
@@ -67,6 +69,8 @@ function MetricsCard({
 
 function StructuringBlock() {
   const { calculationResult } = useCurrentBond()
+  const [showConstantesModal, setShowConstantesModal] = useState(false)
+
   if (!calculationResult) return null
 
   const { constants, input } = calculationResult
@@ -133,16 +137,12 @@ function StructuringBlock() {
             <div className="text-sm text-gray-600">{constants.nombreTasaPeriodo || "TEM"}</div>
           </div>
           <div className="text-center">
-            <div className="text-lg font-bold text-gray-900">{(() => {
-              const pctEstruct = Number(input.pctEstruct) || 0;
-              const pctColoc = Number(input.pctColoc) || 0;
-              const pctCavali = Number(input.pctCavali) || 0;
-              const valorNominal = Number(input.valorNominal) || 0;
-              const sumaPct = pctEstruct + pctColoc + pctCavali;
-              const resultado = (sumaPct / 100) * valorNominal;
-              return `${pctEstruct}% + ${pctColoc}% + ${pctCavali}% × ${formatCurrency(valorNominal, 'PEN')} = ${formatCurrency(resultado, 'PEN')}`;
-            })()}</div>
-            <div className="text-sm text-gray-600">Costes Iniciales Emisor</div>
+            <div className="text-lg font-bold text-gray-900">
+              {formatCurrency((Number(input.pctEstruct || 0) + Number(input.pctColoc || 0) + Number(input.pctCavali || 0)) / 100 * Number(input.valorNominal || 0), 'PEN')}
+            </div>
+            <div className="text-sm text-gray-600 flex flex-col items-center gap-1">
+              Costes Iniciales Emisor
+            </div>
           </div>
           <div className="text-center">
             <div className="text-lg font-bold text-gray-900">
@@ -150,6 +150,18 @@ function StructuringBlock() {
             </div>
             <div className="text-sm text-gray-600">Costes Bonista</div>
           </div>
+        </div>
+        <div className="flex justify-end mt-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="flex items-center gap-2"
+            onClick={() => setShowConstantesModal(true)}
+          >
+            <Info className="h-4 w-4 mr-1" />
+            Ver cálculos detallados
+          </Button>
         </div>
 
         {/* Información adicional sobre la tasa por período */}
@@ -174,13 +186,15 @@ export function BondResults() {
   const { calculationResult, currentBond, mode } = useCurrentBond()
   const [currentView, setCurrentView] = useState<ViewType>("table")
   const [recalculating, setRecalculating] = useState(false)
+  const [showCostesModal, setShowCostesModal] = useState(false)
+  const [showConstantesModal, setShowConstantesModal] = useState(false)
 
   if (!calculationResult) {
     router.push("/dashboard")
     return null
   }
 
-  const { metrics, input } = calculationResult
+  const { metrics, input, constants } = calculationResult
 
   const handleExportExcel = () => {
     if (calculationResult && currentBond) {
@@ -277,6 +291,56 @@ export function BondResults() {
       {/* Resto del contenido con grids responsive */}
       {/* 1. Estructuración del Bono */}
       <StructuringBlock />
+      <div className="flex justify-end mt-2">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="flex items-center gap-2"
+          onClick={() => setShowConstantesModal(true)}
+        >
+          <Info className="h-4 w-4 mr-1" />
+          Ver cálculos detallados
+        </Button>
+      </div>
+      {/* Modal de cálculos detallados */}
+      <Dialog open={showConstantesModal} onOpenChange={setShowConstantesModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Desglose de Constantes Derivadas</DialogTitle>
+            <DialogDescription>
+              Así se calculan los valores mostrados en la estructuración del bono:
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 text-sm">
+            <div><b>Frecuencia Cupón:</b> Según selección del formulario. Ej: Trimestral ({constants.frecuenciaCupon}).</div>
+            <div><b>Días × Año / Frecuencia Cupón:</b> {input.diasPorAnio} / {constants.frecuenciaCupon} = {(input.diasPorAnio && constants.frecuenciaCupon) ? (input.diasPorAnio / constants.frecuenciaCupon) : ''}</div>
+            <div><b>Nº Periodos/Año:</b> {constants.nPeriodosPorAnio} (frecuencia seleccionada)</div>
+            <div><b>Nº Total Periodos:</b> {constants.nTotalPeriodos} (Nº Periodos/Año × Nº de Años)</div>
+            <div><b>Nº Periodos Gracia:</b> {constants.nPeriodosGracia} (Nº de Años de Gracia × Frecuencia)</div>
+            <div><b>TEA:</b> {(() => {
+              if (input.tipoTasa === 'Efectiva') {
+                return `${Number(input.tasaInteres).toFixed(3)}% (Tasa de interés)`;
+              } else if (input.tipoTasa === 'Nominal' && input.tasaInteres && input.diasPorAnio && constants.frecuenciaCupon) {
+                const m = input.diasPorAnio / constants.frecuenciaCupon;
+                const tna = Number(input.tasaInteres) / 100;
+                const tea = (Math.pow(1 + tna / m, m) - 1) * 100;
+                return `${tea.toFixed(3)}% (calculada como (1 + TNA/m)^m - 1)`;
+              } else {
+                return '';
+              }
+            })()}</div>
+            <div><b>{constants.nombreTasaPeriodo || 'Tasa por Período'}:</b> {constants.tasaEfectivaPeriodo ? (constants.tasaEfectivaPeriodo * 100).toFixed(4) + '%' : (constants.tasaEfectivaMensual * 100).toFixed(4) + '%'} (calculada como (1 + TEA)^(1/m) - 1)</div>
+            <div><b>Costes Iniciales Emisor:</b> Suma de % Estructuración, % Colocación y % CAVALI multiplicado por el Valor Nominal.<br />
+              ({input.pctEstruct}% + {input.pctColoc}% + {input.pctCavali}%) × {formatCurrency(Number(input.valorNominal || 0), 'PEN')} = <b>{formatCurrency((Number(input.pctEstruct || 0) + Number(input.pctColoc || 0) + Number(input.pctCavali || 0)) / 100 * Number(input.valorNominal || 0), 'PEN')}</b>
+            </div>
+            <div><b>Costes Bonista:</b> {formatCurrency(constants.costesInicialesBonista, 'PEN')} (solo % CAVALI × Valor Nominal)</div>
+          </div>
+          <DialogFooter>
+            <button onClick={() => setShowConstantesModal(false)} className="mt-4 px-4 py-2 rounded bg-monetix-primary text-white hover:bg-monetix-secondary">Cerrar</button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* 2. Precio Actual y Utilidad */}
       <Card>
