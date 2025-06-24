@@ -110,7 +110,18 @@ function StructuringBlock() {
             <div className="text-sm text-gray-600">Nº Periodos Gracia</div>
           </div>
           <div className="text-center">
-            <div className="text-lg font-bold text-gray-900">{(constants.tasaEfectivaAnual * 100).toFixed(3)}%</div>
+            <div className="text-lg font-bold text-gray-900">{(() => {
+              if (input.tipoTasa === 'Efectiva') {
+                return `${Number(input.tasaInteres).toFixed(3)}%`;
+              } else if (input.tipoTasa === 'Nominal' && input.tasaInteres && input.diasPorAnio && constants.frecuenciaCupon) {
+                const m = input.diasPorAnio / constants.frecuenciaCupon;
+                const tna = Number(input.tasaInteres) / 100;
+                const tea = (Math.pow(1 + tna / m, m) - 1) * 100;
+                return `${tea.toFixed(3)}%`;
+              } else {
+                return '';
+              }
+            })()}</div>
             <div className="text-sm text-gray-600">TEA</div>
           </div>
           <div className="text-center">
