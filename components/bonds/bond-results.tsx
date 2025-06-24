@@ -147,6 +147,10 @@ function StructuringBlock() {
             </div>
             <div className="text-sm text-gray-600">Costes Bonista</div>
           </div>
+          <div className="text-center">
+            <div className="text-lg font-bold text-gray-900">{constants.nPeriodosGracia}</div>
+            <div className="text-sm text-gray-600">Nº Periodos Gracia</div>
+          </div>
         </div>
 
       </CardContent>
