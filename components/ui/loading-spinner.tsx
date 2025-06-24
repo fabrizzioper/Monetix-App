@@ -22,3 +22,14 @@ export function LoadingSpinner({ className, size = "md" }: LoadingSpinnerProps) 
     />
   )
 }
+
+export function LoadingOverlay({ text }: { text?: string }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4">
+      <div className="flex flex-col items-center gap-4 max-w-xs w-full">
+        <LoadingSpinner size="lg" />
+        {text && <span className="text-white text-base sm:text-lg font-medium drop-shadow-lg text-center w-full break-words">{text}</span>}
+      </div>
+    </div>
+  )
+}

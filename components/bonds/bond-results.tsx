@@ -25,6 +25,7 @@ import { BondLineChart } from "./visualizations/bond-line-chart"
 import { BondCandlestickChart } from "./visualizations/bond-candlestick-chart"
 import { BondComboChart } from "./visualizations/bond-combo-chart"
 import { cn } from "@/lib/utils"
+import { LoadingSpinner, LoadingOverlay } from "@/components/ui/loading-spinner"
 
 type ViewType = "table" | "line" | "candlestick" | "combo"
 
@@ -141,6 +142,7 @@ export function BondResults() {
   const router = useRouter()
   const { calculationResult, currentBond, mode } = useCurrentBond()
   const [currentView, setCurrentView] = useState<ViewType>("table")
+  const [recalculating, setRecalculating] = useState(false)
 
   if (!calculationResult) {
     router.push("/dashboard")
@@ -178,6 +180,7 @@ export function BondResults() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-6 px-4 sm:px-6">
+      {recalculating && <LoadingOverlay text="Redirigiendo..." />}
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
@@ -220,13 +223,21 @@ export function BondResults() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => {
+              onClick={async () => {
+                setRecalculating(true)
                 router.push("/nuevo")
               }}
               className="w-full sm:w-auto"
+              disabled={recalculating}
             >
-              <Calculator className="h-4 w-4 mr-2" />
-              Recalcular
+              {recalculating ? (
+                <><LoadingSpinner size="sm" className="mr-2" />Recalculando...</>
+              ) : (
+                <>
+                  <Calculator className="h-4 w-4 mr-2" />
+                  Recalcular
+                </>
+              )}
             </Button>
           )}
         </div>

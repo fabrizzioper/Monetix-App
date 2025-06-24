@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { LoadingSpinner } from "@/components/ui/loading-spinner"
+import { LoadingSpinner, LoadingOverlay } from "@/components/ui/loading-spinner"
 import { bondFormSchema } from "@/lib/validation/bond-form.schema"
 import { BondsService } from "@/lib/services/bonds.service"
 import { useCurrentBond } from "@/lib/hooks/use-current-bond"
@@ -144,7 +144,8 @@ export function BondForm() {
 
       <Formik initialValues={initialValues} validationSchema={bondFormSchema} onSubmit={handleSubmit}>
         {({ isSubmitting, values }) => (
-          <Form className="space-y-6">
+          <Form className="space-y-6 relative">
+            {isSubmitting && <LoadingOverlay text="Calculando..." />}
             {/* Sección Emisor */}
             <Card>
               <CardHeader>
