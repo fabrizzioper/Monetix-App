@@ -34,17 +34,35 @@ export function BondScheduleTable() {
             {schedule?.map((row, index) => (
               <tr key={index} className="border-b hover:bg-gray-50">
                 <td className="p-2">{row.n}</td>
-                <td className="p-2 text-center">{row.plazoGracia}</td>
-                <td className="p-2 text-right">{formatCurrency(row.bono, "PEN")}</td>
-                <td className="p-2 text-right">{formatCurrency(row.bonoIndexado, "PEN")}</td>
-                <td className="p-2 text-right">{formatCurrency(row.cuponInteres, "PEN")}</td>
-                <td className="p-2 text-right">{formatCurrency(row.cuota, "PEN")}</td>
-                <td className="p-2 text-right">{formatCurrency(row.amort, "PEN")}</td>
-                <td className="p-2 text-right">{formatCurrency(row.flujoEmisor, "PEN")}</td>
-                <td className="p-2 text-right">{formatCurrency(row.flujoBonista, "PEN")}</td>
-                <td className="p-2 text-right">{formatCurrency(row.flujoAct, "PEN")}</td>
-                <td className="p-2 text-right">{formatCurrency(row.faXPlazo, "PEN")}</td>
-                <td className="p-2 text-right">{formatCurrency(row.factorConv, "PEN")}</td>
+                {index === 0 ? (
+                  <>
+                    <td className="p-2 text-center"></td>
+                    <td className="p-2 text-right"></td>
+                    <td className="p-2 text-right"></td>
+                    <td className="p-2 text-right"></td>
+                    <td className="p-2 text-right"></td>
+                    <td className="p-2 text-right"></td>
+                    <td className="p-2 text-right">{formatCurrency(row.flujoEmisor, "PEN")}</td>
+                    <td className="p-2 text-right">{formatCurrency(row.flujoBonista, "PEN")}</td>
+                    <td className="p-2 text-right"></td>
+                    <td className="p-2 text-right"></td>
+                    <td className="p-2 text-right"></td>
+                  </>
+                ) : (
+                  <>
+                    <td className="p-2 text-center">{row.plazoGracia}</td>
+                    <td className="p-2 text-right">{formatCurrency(row.bono, "PEN")}</td>
+                    <td className="p-2 text-right">{formatCurrency(row.bonoIndexado, "PEN")}</td>
+                    <td className="p-2 text-right">{formatCurrency(row.cuponInteres, "PEN")}</td>
+                    <td className="p-2 text-right">{formatCurrency(row.cuota, "PEN")}</td>
+                    <td className="p-2 text-right">{formatCurrency(row.amort, "PEN")}</td>
+                    <td className="p-2 text-right">{formatCurrency(row.flujoEmisor, "PEN")}</td>
+                    <td className="p-2 text-right">{formatCurrency(row.flujoBonista, "PEN")}</td>
+                    <td className="p-2 text-right">{formatCurrency(row.flujoAct, "PEN")}</td>
+                    <td className="p-2 text-right">{formatCurrency(row.faXPlazo, "PEN")}</td>
+                    <td className="p-2 text-right">{formatCurrency(row.factorConv, "PEN")}</td>
+                  </>
+                )}
               </tr>
             ))}
           </tbody>
