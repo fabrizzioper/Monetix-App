@@ -127,11 +127,9 @@ function StructuringBlock() {
           </div>
           <div className="text-center">
             <div className="text-lg font-bold text-gray-900">
-              {constants.tasaEfectivaPeriodo
-                ? `${(constants.tasaEfectivaPeriodo * 100).toFixed(4)}%`
-                : `${(constants.tasaEfectivaMensual * 100).toFixed(4)}%`}
+              {constants.tasaEfectivaPeriodo ? (constants.tasaEfectivaPeriodo * 100).toFixed(4) + '%' : (constants.tasaEfectivaMensual * 100).toFixed(4) + '%'}
             </div>
-            <div className="text-sm text-gray-600">{constants.nombreTasaPeriodo || "TEM"}</div>
+            <div className="text-sm text-gray-600">{constants.nombreTasaPeriodo || "Tasa por Período"}</div>
           </div>
           <div className="text-center">
             <div className="text-lg font-bold text-gray-900">
@@ -340,13 +338,14 @@ export function BondResults() {
             </div>
             <div>
               <b className="text-monetix-primary">{constants.nombreTasaPeriodo || 'Tasa por Período'}:</b> <span className="font-mono">{constants.tasaEfectivaPeriodo ? (constants.tasaEfectivaPeriodo * 100).toFixed(4) + '%' : (constants.tasaEfectivaMensual * 100).toFixed(4) + '%'}</span><br />
-              <span className="text-gray-500">Fórmula: <b>(1 + TEA)<sup>1/m</sup> - 1</b>, m = frecuencia</span>
+              <span className="text-gray-500">
+                Fórmula: <b>(1 + {constants.nombreTasaPeriodo})^({constants.frecuenciaCupon}/{input.diasPorAnio}) - 1</b><br />
+              </span>
             </div>
             <div className="border-t pt-2 mt-2">
               <b className="text-monetix-primary">Costes Iniciales Emisor:</b><br />
               <span className="font-mono">({input.pctEstruct}% + {input.pctColoc}% + {input.pctCavali}%) × {formatCurrency(Number(input.valorNominal || 0), 'PEN')}</span><br />
               <span className="text-gray-500">Suma de % Estructuración, % Colocación y % CAVALI multiplicado por el Valor Nominal.</span><br />
-              <span className="text-gray-500">Ejemplo: ({input.pctEstruct}% + {input.pctColoc}% + {input.pctCavali}%) × {formatCurrency(Number(input.valorNominal || 0), 'PEN')} = <b>{formatCurrency((Number(input.pctEstruct || 0) + Number(input.pctColoc || 0) + Number(input.pctCavali || 0)) / 100 * Number(input.valorNominal || 0), 'PEN')}</b></span>
             </div>
             <div>
               <b className="text-monetix-primary">Costes Bonista:</b> <span className="font-mono">{formatCurrency(constants.costesInicialesBonista, 'PEN')}</span><br />
