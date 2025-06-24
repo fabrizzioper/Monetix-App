@@ -235,6 +235,30 @@ export function BondForm() {
                 </div>
 
                 <div className="space-y-2">
+                  <Label htmlFor="diasPorPeriodo" className="text-sm font-medium text-gray-700">
+                    Días por Período
+                  </Label>
+                  <Input
+                    id="diasPorPeriodo"
+                    type="number"
+                    value={(() => {
+                      switch (Number(values.frecuenciaCupon)) {
+                        case 12: return 30;
+                        case 6: return 60;
+                        case 4: return 90;
+                        case 3: return 120;
+                        case 2: return 180;
+                        case 1: return 360;
+                        default: return '';
+                      }
+                    })()}
+                    readOnly
+                    disabled
+                    className="w-full bg-gray-100 cursor-not-allowed"
+                  />
+                </div>
+
+                <div className="space-y-2">
                   <Label htmlFor="diasPorAnio" className="text-sm font-medium text-gray-700">
                     Días × Año
                   </Label>

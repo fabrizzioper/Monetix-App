@@ -84,6 +84,20 @@ function StructuringBlock() {
             <div className="text-sm text-gray-600">Frecuencia Cupón</div>
           </div>
           <div className="text-center">
+            <div className="text-lg font-bold text-gray-900">{(() => {
+              switch (Number(constants.frecuenciaCupon)) {
+                case 12: return 30;
+                case 6: return 60;
+                case 4: return 90;
+                case 3: return 120;
+                case 2: return 180;
+                case 1: return 360;
+                default: return '';
+              }
+            })()}</div>
+            <div className="text-sm text-gray-600">Días por Período</div>
+          </div>
+          <div className="text-center">
             <div className="text-lg font-bold text-gray-900">{constants.nPeriodosPorAnio}</div>
             <div className="text-sm text-gray-600">Nº Periodos/Año</div>
           </div>
