@@ -178,73 +178,60 @@ export function buildBondTable(input: BondInput): FlowRow[] {
     result: "Cronograma iniciado",
   })
 
+  // Calcular cuota francesa para los periodos después de la gracia
+  const nCuotas = N - Ng;
+  let cuotaFrancesa = 0;
+  if (nCuotas > 0) {
+    cuotaFrancesa = input.valorNominal * (i / (1 - Math.pow(1 + i, -nCuotas)));
+  }
+
   for (let n = 0; n <= N; n++) {
-    /* --- columna: plazo de gracia --- */
-    let flag: "" | "P" | "T" | "S" = ""
+    let flag: "" | "P" | "T" | "S" = "";
     if (n > 0) {
-      if (n <= Ng) flag = input.tipoGracia === "Parcial" ? "P" : input.tipoGracia === "Total" ? "T" : "S"
-      else flag = "S"
+      if (n <= Ng) flag = input.tipoGracia === "Parcial" ? "P" : input.tipoGracia === "Total" ? "T" : "S";
+      else flag = "S";
     }
 
-    /* --- cupón y amortización --- */
-    const amort = 0
-    let cup = 0
+    let bonoAnterior = n === 1 ? input.valorNominal : rows[n - 1]?.bonoIndexado || 0;
+    let interes = 0;
+    let amort = 0;
+    let cuota = 0;
+    let bono = 0;
+
     if (n === 0) {
-      cup = 0
-    } else {
-      if (input.tipoGracia === "Total" && n <= Ng) {
-        cup = 0
-      } else {
-        cup = -cupón // Usar el cupón corregido
-      }
+      bono = 0;
+      interes = 0;
+      amort = 0;
+      cuota = 0;
+    } else if (flag === "P") {
+      bono = bonoAnterior;
+      interes = bonoAnterior * i;
+      amort = 0;
+      cuota = interes;
+    } else if (flag === "S") {
+      interes = bonoAnterior * i;
+      cuota = cuotaFrancesa;
+      amort = cuota - interes;
+      bono = bonoAnterior - amort;
     }
-    const cuota = cup + amort
+
+    // --- Cupón (negativo para emisor) ---
+    let cup = n === 0 ? 0 : -interes;
 
     /* --- flujos --- */
-    const flujoE = n === 0 ? input.valorNominal - costEmi - costBon : cuota
-    const flujoB = -flujoE
+    const flujoE = n === 0 ? input.valorNominal - costEmi - costBon : cuota;
+    const flujoB = -flujoE;
 
     /* --- descuento y factores --- */
-    const pv = flujoB / Math.pow(1 + kdDec, n)
-    const faPlazo = pv * n
-    const factorConv = pv * n * (n + 1)
-
-    // Log detallado para los primeros 3 períodos y el último
-    if (n <= 2 || n === N) {
-      CalculationLogger.addStep({
-        step: `Período ${n}`,
-        description: `Cálculo completo del período ${n}`,
-        formula: "Flujo Emisor, Flujo Bonista, Valor Presente, Factores",
-        inputs: {
-          periodo: n,
-          tipoGracia: input.tipoGracia,
-          periodosGracia: Ng,
-          saldo,
-          cuponCorregido: cupón,
-          kdDecimal: kdDec,
-        },
-        calculation:
-          n === 0
-            ? `FlujoE = ${input.valorNominal} - ${costEmi} - ${costBon} = ${flujoE}, FlujoB = -${flujoE} = ${flujoB}, PV = ${flujoB} / (1 + ${kdDec})^${n} = ${pv}`
-            : `Cupón = ${cup} (${cupón} con ajuste de días), FlujoE = ${cuota}, FlujoB = ${flujoB}, PV = ${flujoB} / (1 + ${kdDec})^${n} = ${pv}, FA×Plazo = ${pv} × ${n} = ${faPlazo}`,
-        result: {
-          plazoGracia: flag,
-          cuponInteres: cup,
-          flujoEmisor: flujoE,
-          flujoBonista: flujoB,
-          flujoActualizado: pv,
-          faXPlazo: faPlazo,
-          factorConvexidad: factorConv,
-        },
-        dependencies: ["Cálculo de Constantes Básicas", "Cálculo de Costes Iniciales", "Tasa de Descuento"],
-      })
-    }
+    const pv = flujoB / Math.pow(1 + kdDec, n);
+    const faPlazo = pv * n;
+    const factorConv = pv * n * (n + 1);
 
     rows.push({
       n,
       plazoGracia: flag,
-      bono: saldo,
-      bonoIndexado: saldo,
+      bono,
+      bonoIndexado: bono,
       cuponInteres: cup,
       cuota,
       amort,
@@ -253,7 +240,7 @@ export function buildBondTable(input: BondInput): FlowRow[] {
       flujoAct: pv,
       faXPlazo: faPlazo,
       factorConv,
-    })
+    });
 
     saldo -= amort
   }

@@ -33,20 +33,11 @@ export class CalculationLogger {
       schedule: [],
       metrics: null,
     }
-    console.log("🚀 INICIANDO CÁLCULOS DE BONO:", bondName)
-    console.log("📊 DATOS DE ENTRADA:", input)
   }
 
   static addStep(step: CalculationStep) {
     this.steps.push(step)
-    console.log(`\n📐 PASO ${this.steps.length}: ${step.step}`)
-    console.log(`📝 Descripción: ${step.description}`)
-    console.log(`🔢 Fórmula: ${step.formula}`)
-    console.log(`📥 Entradas:`, step.inputs)
-    console.log(`🧮 Cálculo: ${step.calculation}`)
-    console.log(`✅ Resultado: ${step.result}`)
     if (step.dependencies) {
-      console.log(`🔗 Depende de:`, step.dependencies)
     }
   }
 
@@ -56,12 +47,6 @@ export class CalculationLogger {
       this.log.constants = constants
       this.log.schedule = schedule
       this.log.metrics = metrics
-
-      console.log("\n🎯 RESUMEN FINAL DE CÁLCULOS:")
-      console.log("📊 Constantes:", constants)
-      console.log("📋 Cronograma generado:", schedule.length, "períodos")
-      console.log("📈 Métricas finales:", metrics)
-      console.log("✅ CÁLCULOS COMPLETADOS")
     }
   }
 
