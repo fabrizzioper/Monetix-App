@@ -80,7 +80,17 @@ function StructuringBlock() {
       <CardContent>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="text-center">
-            <div className="text-lg font-bold text-gray-900">{constants.frecuenciaCupon}</div>
+            <div className="text-lg font-bold text-gray-900">{(() => {
+              switch (Number(constants.frecuenciaCupon)) {
+                case 12: return 'Mensual (12)';
+                case 6: return 'Bimestral (6)';
+                case 4: return 'Trimestral (4)';
+                case 3: return 'Cuatrimestral (3)';
+                case 2: return 'Semestral (2)';
+                case 1: return 'Anual (1)';
+                default: return constants.frecuenciaCupon;
+              }
+            })()}</div>
             <div className="text-sm text-gray-600">Frecuencia Cupón</div>
           </div>
           <div className="text-center">
