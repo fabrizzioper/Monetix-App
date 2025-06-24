@@ -17,19 +17,19 @@ import { useUserBonds } from "@/lib/hooks/use-user-bonds"
 import { cn } from "@/lib/utils"
 
 const defaultValues = {
-  valorNominal: 515000000,
-  valorComercial: 515000000,
-  nAnios: 8,
-  frecuenciaCupon: 1,
-  diasPorAnio: 360,
-  tipoTasa: "Efectiva",
-  tasaInteres: 7.375,
-  tipoGracia: "Parcial",
-  plazoGraciaAnio: 4,
-  pctEstruct: 0.45,
-  pctColoc: 0.25,
-  pctCavali: 0.5,
-  kd: null,
+  valorNominal: '',
+  valorComercial: '',
+  nAnios: '',
+  frecuenciaCupon: '',
+  diasPorAnio: '',
+  tipoTasa: '',
+  tasaInteres: '',
+  tipoGracia: '',
+  plazoGraciaAnio: '',
+  pctEstruct: '',
+  pctColoc: '',
+  pctCavali: '',
+  kd: '',
 }
 
 export function BondForm() {
@@ -166,6 +166,7 @@ export function BondForm() {
                         type="number"
                         placeholder="515000000"
                         className={cn("w-full", meta.touched && meta.error && "border-red-500")}
+                        value={field.value ?? ''}
                       />
                     )}
                   </Field>
@@ -184,6 +185,7 @@ export function BondForm() {
                         type="number"
                         placeholder="8"
                         className={cn("w-full", meta.touched && meta.error && "border-red-500")}
+                        value={field.value ?? ''}
                       />
                     )}
                   </Field>
@@ -276,6 +278,7 @@ export function BondForm() {
                         step="0.001"
                         placeholder="7.375"
                         className={cn("w-full", meta.touched && meta.error && "border-red-500")}
+                        value={field.value ?? ''}
                       />
                     )}
                   </Field>
@@ -318,10 +321,26 @@ export function BondForm() {
                         type="number"
                         placeholder="4"
                         className={cn("w-full", meta.touched && meta.error && "border-red-500")}
+                        value={field.value ?? ''}
                       />
                     )}
                   </Field>
                   <ErrorMessage name="plazoGraciaAnio" component="p" className="text-xs text-red-600" />
+                </div>
+
+                {/* Campo autocalculado: Nº de Periodos de Gracia */}
+                <div className="space-y-2">
+                  <Label htmlFor="nPeriodosGracia" className="text-sm font-medium text-gray-700">
+                    Nº de Periodos de Gracia
+                  </Label>
+                  <Input
+                    id="nPeriodosGracia"
+                    type="number"
+                    value={values.plazoGraciaAnio ? 2 * Number(values.plazoGraciaAnio) : 0}
+                    readOnly
+                    disabled
+                    className="w-full bg-gray-100 cursor-not-allowed"
+                  />
                 </div>
               </CardContent>
             </Card>
@@ -346,6 +365,7 @@ export function BondForm() {
                         step="0.01"
                         placeholder="0.45"
                         className={cn("w-full", meta.touched && meta.error && "border-red-500")}
+                        value={field.value ?? ''}
                       />
                     )}
                   </Field>
@@ -365,6 +385,7 @@ export function BondForm() {
                         step="0.01"
                         placeholder="0.25"
                         className={cn("w-full", meta.touched && meta.error && "border-red-500")}
+                        value={field.value ?? ''}
                       />
                     )}
                   </Field>
@@ -384,6 +405,7 @@ export function BondForm() {
                         step="0.01"
                         placeholder="0.5"
                         className={cn("w-full", meta.touched && meta.error && "border-red-500")}
+                        value={field.value ?? ''}
                       />
                     )}
                   </Field>
