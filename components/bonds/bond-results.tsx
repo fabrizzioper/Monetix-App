@@ -133,10 +133,16 @@ function StructuringBlock() {
             <div className="text-sm text-gray-600">{constants.nombreTasaPeriodo || "TEM"}</div>
           </div>
           <div className="text-center">
-            <div className="text-lg font-bold text-gray-900">
-              {formatCurrency(constants.costesInicialesEmisor, "PEN")}
-            </div>
-            <div className="text-sm text-gray-600">Costes Emisor</div>
+            <div className="text-lg font-bold text-gray-900">{(() => {
+              const pctEstruct = Number(input.pctEstruct) || 0;
+              const pctColoc = Number(input.pctColoc) || 0;
+              const pctCavali = Number(input.pctCavali) || 0;
+              const valorNominal = Number(input.valorNominal) || 0;
+              const sumaPct = pctEstruct + pctColoc + pctCavali;
+              const resultado = (sumaPct / 100) * valorNominal;
+              return `${pctEstruct}% + ${pctColoc}% + ${pctCavali}% × ${formatCurrency(valorNominal, 'PEN')} = ${formatCurrency(resultado, 'PEN')}`;
+            })()}</div>
+            <div className="text-sm text-gray-600">Costes Iniciales Emisor</div>
           </div>
           <div className="text-center">
             <div className="text-lg font-bold text-gray-900">
