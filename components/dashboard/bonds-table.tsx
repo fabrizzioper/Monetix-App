@@ -6,7 +6,7 @@ import { Eye, Edit, Trash2, Plus, Calculator, Search, Filter, CreditCard } from 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { LoadingSpinner } from "@/components/ui/loading-spinner"
+import { LoadingSpinner, LoadingOverlay } from "@/components/ui/loading-spinner"
 import { Badge } from "@/components/ui/badge"
 import {
   AlertDialog,
@@ -99,14 +99,7 @@ export function BondsTable() {
   }
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-12 min-h-[50vh]">
-        <div className="text-center space-y-4">
-          <LoadingSpinner size="lg" />
-          <p className="text-gray-600">Cargando bonos...</p>
-        </div>
-      </div>
-    )
+    return <LoadingOverlay text="Cargando bonos..." />
   }
 
   if (error) {

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { LoginForm } from "@/components/auth/login-form"
 import { useAuth } from "@/lib/hooks/use-auth"
-import { LoadingSpinner } from "@/components/ui/loading-spinner"
+import { LoadingSpinner, LoadingOverlay } from "@/components/ui/loading-spinner"
 
 export default function LoginPage() {
   const { isAuthenticated, isLoading } = useAuth()
@@ -18,25 +18,11 @@ export default function LoginPage() {
   }, [isAuthenticated, isLoading, router])
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="text-center space-y-4">
-          <LoadingSpinner size="lg" />
-          <p className="text-gray-600">Cargando...</p>
-        </div>
-      </div>
-    )
+    return <LoadingOverlay text="Cargando..." />
   }
 
   if (isAuthenticated) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="text-center space-y-4">
-          <LoadingSpinner size="lg" />
-          <p className="text-gray-600">Redirigiendo...</p>
-        </div>
-      </div>
-    )
+    return <LoadingOverlay text="Redirigiendo..." />
   }
 
   return (
