@@ -172,24 +172,6 @@ export function BondForm() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="valorComercial" className="text-sm font-medium text-gray-700">
-                    Valor Comercial
-                  </Label>
-                  <Field name="valorComercial">
-                    {({ field, meta }: any) => (
-                      <Input
-                        {...field}
-                        id="valorComercial"
-                        type="number"
-                        placeholder="515000000"
-                        className={cn("w-full", meta.touched && meta.error && "border-red-500")}
-                      />
-                    )}
-                  </Field>
-                  <ErrorMessage name="valorComercial" component="p" className="text-xs text-red-600" />
-                </div>
-
-                <div className="space-y-2">
                   <Label htmlFor="nAnios" className="text-sm font-medium text-gray-700">
                     Nº de Años
                   </Label>
@@ -405,37 +387,6 @@ export function BondForm() {
                     )}
                   </Field>
                   <ErrorMessage name="pctCavali" component="p" className="text-xs text-red-600" />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Sección Inversionista */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg sm:text-xl">Sección Inversionista</CardTitle>
-                <CardDescription>Parámetros para el análisis del inversionista</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="w-full sm:max-w-sm">
-                  <div className="space-y-2">
-                    <Label htmlFor="kd" className="text-sm font-medium text-gray-700">
-                      Tasa de Descuento (%)
-                    </Label>
-                    <Field name="kd">
-                      {({ field, meta }: any) => (
-                        <Input
-                          {...field}
-                          id="kd"
-                          type="number"
-                          step="0.01"
-                          placeholder="Opcional"
-                          value={field.value || ""}
-                          className={cn("w-full", meta.touched && meta.error && "border-red-500")}
-                        />
-                      )}
-                    </Field>
-                    <ErrorMessage name="kd" component="p" className="text-xs text-red-600" />
-                  </div>
                 </div>
               </CardContent>
             </Card>
