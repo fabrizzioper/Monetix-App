@@ -109,10 +109,7 @@ function StructuringBlock() {
             <div className="text-lg font-bold text-gray-900">{constants.nTotalPeriodos}</div>
             <div className="text-sm text-gray-600">Nº Total Periodos</div>
           </div>
-          <div className="text-center">
-            <div className="text-lg font-bold text-gray-900">{constants.nPeriodosGracia}</div>
-            <div className="text-sm text-gray-600">Nº Periodos Gracia</div>
-          </div>
+         
           <div className="text-center">
             <div className="text-lg font-bold text-gray-900">{(() => {
               if (input.tipoTasa === 'Efectiva') {
@@ -151,31 +148,7 @@ function StructuringBlock() {
             <div className="text-sm text-gray-600">Costes Bonista</div>
           </div>
         </div>
-        <div className="flex justify-end mt-2">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="flex items-center gap-2"
-            onClick={() => setShowConstantesModal(true)}
-          >
-            <Info className="h-4 w-4 mr-1" />
-            Ver cálculos detallados
-          </Button>
-        </div>
 
-        {/* Información adicional sobre la tasa por período */}
-        <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-          <div className="text-sm text-blue-800">
-            <strong>Tasa Efectiva por Período:</strong> {constants.nombreTasaPeriodo || "TEM"} =
-            {constants.tasaEfectivaPeriodo
-              ? ` ${(constants.tasaEfectivaPeriodo * 100).toFixed(6)}%`
-              : ` ${(constants.tasaEfectivaMensual * 100).toFixed(6)}%`}
-          </div>
-          <div className="text-xs text-blue-600 mt-1">
-            Calculada como: (1 + TEA)^(1/{constants.frecuenciaCupon}) - 1
-          </div>
-        </div>
       </CardContent>
     </Card>
   )
@@ -305,36 +278,76 @@ export function BondResults() {
       </div>
       {/* Modal de cálculos detallados */}
       <Dialog open={showConstantesModal} onOpenChange={setShowConstantesModal}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Desglose de Constantes Derivadas</DialogTitle>
             <DialogDescription>
-              Así se calculan los valores mostrados en la estructuración del bono:
+              Así se calculan y de dónde salen los valores de la estructuración del bono:
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-3 text-sm">
-            <div><b>Frecuencia Cupón:</b> Según selección del formulario. Ej: Trimestral ({constants.frecuenciaCupon}).</div>
-            <div><b>Días × Año / Frecuencia Cupón:</b> {input.diasPorAnio} / {constants.frecuenciaCupon} = {(input.diasPorAnio && constants.frecuenciaCupon) ? (input.diasPorAnio / constants.frecuenciaCupon) : ''}</div>
-            <div><b>Nº Periodos/Año:</b> {constants.nPeriodosPorAnio} (frecuencia seleccionada)</div>
-            <div><b>Nº Total Periodos:</b> {constants.nTotalPeriodos} (Nº Periodos/Año × Nº de Años)</div>
-            <div><b>Nº Periodos Gracia:</b> {constants.nPeriodosGracia} (Nº de Años de Gracia × Frecuencia)</div>
-            <div><b>TEA:</b> {(() => {
-              if (input.tipoTasa === 'Efectiva') {
-                return `${Number(input.tasaInteres).toFixed(3)}% (Tasa de interés)`;
-              } else if (input.tipoTasa === 'Nominal' && input.tasaInteres && input.diasPorAnio && constants.frecuenciaCupon) {
-                const m = input.diasPorAnio / constants.frecuenciaCupon;
-                const tna = Number(input.tasaInteres) / 100;
-                const tea = (Math.pow(1 + tna / m, m) - 1) * 100;
-                return `${tea.toFixed(3)}% (calculada como (1 + TNA/m)^m - 1)`;
-              } else {
-                return '';
-              }
-            })()}</div>
-            <div><b>{constants.nombreTasaPeriodo || 'Tasa por Período'}:</b> {constants.tasaEfectivaPeriodo ? (constants.tasaEfectivaPeriodo * 100).toFixed(4) + '%' : (constants.tasaEfectivaMensual * 100).toFixed(4) + '%'} (calculada como (1 + TEA)^(1/m) - 1)</div>
-            <div><b>Costes Iniciales Emisor:</b> Suma de % Estructuración, % Colocación y % CAVALI multiplicado por el Valor Nominal.<br />
-              ({input.pctEstruct}% + {input.pctColoc}% + {input.pctCavali}%) × {formatCurrency(Number(input.valorNominal || 0), 'PEN')} = <b>{formatCurrency((Number(input.pctEstruct || 0) + Number(input.pctColoc || 0) + Number(input.pctCavali || 0)) / 100 * Number(input.valorNominal || 0), 'PEN')}</b>
+          <div className="space-y-4 text-sm">
+            <div className="border-b pb-2 mb-2">
+              <b className="text-monetix-primary">Frecuencia Cupón:</b> <span className="font-mono">{(() => {
+                switch (Number(constants.frecuenciaCupon)) {
+                  case 12: return 'Mensual (12)';
+                  case 6: return 'Bimestral (6)';
+                  case 4: return 'Trimestral (4)';
+                  case 3: return 'Cuatrimestral (3)';
+                  case 2: return 'Semestral (2)';
+                  case 1: return 'Anual (1)';
+                  default: return constants.frecuenciaCupon;
+                }
+              })()}</span><br />
+              <span className="text-gray-500">Seleccionado en el formulario.</span>
             </div>
-            <div><b>Costes Bonista:</b> {formatCurrency(constants.costesInicialesBonista, 'PEN')} (solo % CAVALI × Valor Nominal)</div>
+            <div>
+              <b className="text-monetix-primary">Días × Año / Frecuencia Cupón:</b> <span className="font-mono">{input.diasPorAnio} / {constants.frecuenciaCupon} = {(input.diasPorAnio && constants.frecuenciaCupon) ? (input.diasPorAnio / constants.frecuenciaCupon) : ''}</span><br />
+              <span className="text-gray-500">Convención de días seleccionada dividido entre la frecuencia.</span>
+            </div>
+            <div>
+              <b className="text-monetix-primary">Nº Periodos/Año:</b> <span className="font-mono">{constants.nPeriodosPorAnio}</span><br />
+              <span className="text-gray-500">Equivale a la frecuencia seleccionada.</span>
+            </div>
+            <div>
+              <b className="text-monetix-primary">Nº Total Periodos:</b> <span className="font-mono">{constants.nTotalPeriodos}</span><br />
+              <span className="text-gray-500">Fórmula: <b>Nº Periodos/Año × Nº de Años</b> = {constants.nPeriodosPorAnio} × {input.nAnios} = {constants.nTotalPeriodos}</span>
+            </div>
+            <div>
+              <b className="text-monetix-primary">Nº Periodos Gracia:</b> <span className="font-mono">{constants.nPeriodosGracia}</span><br />
+              <span className="text-gray-500">Fórmula: <b>Nº de Años de Gracia × Frecuencia</b> = {input.plazoGraciaAnio} × {constants.frecuenciaCupon} = {constants.nPeriodosGracia}</span>
+            </div>
+            <div className="border-t pt-2 mt-2">
+              <b className="text-monetix-primary">TEA (Tasa Efectiva Anual):</b><br />
+              {input.tipoTasa === 'Efectiva' ? (
+                <>
+                  <span className="font-mono">{Number(input.tasaInteres).toFixed(3)}%</span> <span className="text-gray-500">(Tasa de interés ingresada)</span>
+                </>
+              ) : (
+                <>
+                  <span className="font-mono">{(() => {
+                    const m = input.diasPorAnio / constants.frecuenciaCupon;
+                    const tna = Number(input.tasaInteres) / 100;
+                    const tea = (Math.pow(1 + tna / m, m) - 1) * 100;
+                    return tea.toFixed(3);
+                  })()}%</span> <span className="text-gray-500">(calculada como <b>(1 + TNA/m)<sup>m</sup> - 1</b>)</span><br />
+                  <span className="text-gray-500">TNA = {input.tasaInteres}% anual, m = {input.diasPorAnio} / {constants.frecuenciaCupon} = {input.diasPorAnio / constants.frecuenciaCupon}</span>
+                </>
+              )}
+            </div>
+            <div>
+              <b className="text-monetix-primary">{constants.nombreTasaPeriodo || 'Tasa por Período'}:</b> <span className="font-mono">{constants.tasaEfectivaPeriodo ? (constants.tasaEfectivaPeriodo * 100).toFixed(4) + '%' : (constants.tasaEfectivaMensual * 100).toFixed(4) + '%'}</span><br />
+              <span className="text-gray-500">Fórmula: <b>(1 + TEA)<sup>1/m</sup> - 1</b>, m = frecuencia</span>
+            </div>
+            <div className="border-t pt-2 mt-2">
+              <b className="text-monetix-primary">Costes Iniciales Emisor:</b><br />
+              <span className="font-mono">({input.pctEstruct}% + {input.pctColoc}% + {input.pctCavali}%) × {formatCurrency(Number(input.valorNominal || 0), 'PEN')}</span><br />
+              <span className="text-gray-500">Suma de % Estructuración, % Colocación y % CAVALI multiplicado por el Valor Nominal.</span><br />
+              <span className="text-gray-500">Ejemplo: ({input.pctEstruct}% + {input.pctColoc}% + {input.pctCavali}%) × {formatCurrency(Number(input.valorNominal || 0), 'PEN')} = <b>{formatCurrency((Number(input.pctEstruct || 0) + Number(input.pctColoc || 0) + Number(input.pctCavali || 0)) / 100 * Number(input.valorNominal || 0), 'PEN')}</b></span>
+            </div>
+            <div>
+              <b className="text-monetix-primary">Costes Bonista:</b> <span className="font-mono">{formatCurrency(constants.costesInicialesBonista, 'PEN')}</span><br />
+              <span className="text-gray-500">Solo % CAVALI × Valor Nominal</span>
+            </div>
           </div>
           <DialogFooter>
             <button onClick={() => setShowConstantesModal(false)} className="mt-4 px-4 py-2 rounded bg-monetix-primary text-white hover:bg-monetix-secondary">Cerrar</button>
